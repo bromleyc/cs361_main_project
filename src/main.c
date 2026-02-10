@@ -5,7 +5,8 @@
 #include "../inc/tools.h"
 
 int main() {
-	printf("Enter a number to select an option:\n1 - Enter a new customer\n2 - Enter a new employee\n3 - Enter a ticket\n");
+	printf("Enter a number to select an option:\n1 - Enter a new customer\n2 - Enter a new employee\n3 - Enter a ticket\n4 -"
+			" View a ticket\n");
 	int optionSelMain;
 	scanf("%d", &optionSelMain);
 	char catchBuffer[2];
@@ -66,6 +67,23 @@ int main() {
 		printf("New Ticket Entered: %s\n", ticket->subjectLine);
 		freeTicket(ticket);
 		break;}
+
+		case 4: {
+		printf("Enter ticket subject line: ");
+		char sub[1024];
+		getline(sub, stdin);
+		struct ticket* ticket = loadTicket(sub);
+		char in[16];
+		strFromPriority(in, ticket->priority);
+		printf("Subject: %s Customer: %s %s\n%s\n", ticket->subjectLine, ticket->customer->name, in, ticket->ticketDesc);
+		}
+
+		case 5: {
+			printf("Enter a ticket to delete: ");
+			char itemToDel[64];
+			getline(itemToDel, stdin);
+			deleteLine(itemToDel, "tickets");
+			}
 	}
 	return 0;
 }

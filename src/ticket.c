@@ -1,6 +1,7 @@
 #include "../inc/ticket.h"
 #include "../inc/employee.h"
 #include "../inc/customer.h"
+#include "../inc/tools.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -25,6 +26,61 @@ struct ticket* createTicket(
 	newTicket->employee = employee;
 	newTicket->customer = customer;
 	return newTicket;
+}
+
+enum priority priorityFromStr(char* priorStr){
+	enum priority prior;
+	if (strcmp(priorStr, "Low") == 0) {
+		prior = Low;
+	} else if (strcmp(priorStr, "Medium")) {
+		prior = Medium;
+	} else {
+		prior = High;
+	}
+	return prior;
+}
+
+void strFromPriority(char* in, enum priority prior){	
+	if (prior == Low) {
+		strcpy(in, "Low");;
+	} else if (prior == Medium) {
+		strcpy(in, "Medium");
+	} else {
+		strcpy(in, "High");
+	}
+}
+
+struct ticket* loadTicket(char* subjectLine){
+	FILE* ticketFile = fopen("./data/tickets.csv", "r");
+	size_t subjectLen = strlen(subjectLine);
+	int foundFlag = 0;
+	char newLine[2048];
+
+	while(1){
+		getline(newLine, ticketFile);
+		if(strncmp(newLine, subjectLine, subjectLen) == 0){
+			foundFlag = 1;
+			break;
+		}
+	}
+	if(foundFlag == 1){
+		strtok(newLine, ",");
+		char* ticketDesc = strtok(NULL, ",");
+		char* priorStr = strtok(NULL, ",");
+		char* empStr = strtok(NULL, ",");
+		char* custStr = strtok(NULL, ",");
+		struct ticket* ticket;
+
+		if (strcmp(empStr, "NULL") == 0) {
+			ticket = createTicket(subjectLine, ticketDesc, priorityFromStr(priorStr), NULL, loadCustomer(custStr));
+			return ticket;
+		} else {
+			ticket = createTicket(subjectLine, ticketDesc, priorityFromStr(priorStr), loadEmployee(empStr), loadCustomer(custStr));
+			return ticket;
+		}
+	} else{
+		return NULL;
+		}
 }
 
 void writeTicket(struct ticket* ticket) {

@@ -1,5 +1,6 @@
 #pragma once
 #include <stdio.h>
 
-void getline(char* out, FILE* stream);
+int getline(char* out, FILE* stream);
+void deleteLine(char* itemToDel, char* table);
 void nextline(FILE* stream);

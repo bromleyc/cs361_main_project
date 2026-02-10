@@ -20,5 +20,8 @@ struct ticket* createTicket(
 		struct employee*, 
 		struct customer*);
 
+enum priority priorityFromStr(char* priorStr);
+void strFromPriority(char* in, enum priority prior);
+struct ticket* loadTicket(char* subjectLine);
 void writeTicket(struct ticket*);
 void freeTicket(struct ticket*);
