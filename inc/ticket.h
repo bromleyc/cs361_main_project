@@ -1,5 +1,6 @@
 #pragma once
 #include <time.h>
+#include "./employee.h"
 
 enum priority {Low, Medium, High};
 
@@ -24,4 +25,6 @@ enum priority priorityFromStr(char* priorStr);
 void strFromPriority(char* in, enum priority prior);
 struct ticket* loadTicket(char* subjectLine);
 void writeTicket(struct ticket*);
+void assignTicket(struct ticket*, struct employee*);
 void freeTicket(struct ticket*);
+void printAllTickets();

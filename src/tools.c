@@ -22,7 +22,10 @@ void deleteLine(char* itemToDel, char* table) {
 	strcpy(filePath, "./data/");
 	strcat(filePath, table);
 	strcat(filePath, ".csv");
-	strcat(itemToDel, ",");
+
+	char itemDelCopy[64];
+	strcpy(itemDelCopy, itemToDel);
+	strcat(itemDelCopy, ",");
 	FILE* file = fopen(filePath, "r");
 	FILE* newFile = fopen("./data/temp", "w");
 	int itemLen = strlen(itemToDel);
@@ -39,10 +42,10 @@ void deleteLine(char* itemToDel, char* table) {
 			fputs(nextLine, newFile);
 		}
 	}
-	fclose(file);
-	fclose(newFile);
-	remove(filePath);
-	rename("./data/temp", filePath);
+	int oldFileClose = fclose(file);
+	int newFileClose = fclose(newFile);
+	int removeRet = remove(filePath);
+	int renameRet = rename("./data/temp", filePath);
 
 	return;
 }

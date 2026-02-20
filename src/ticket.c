@@ -73,12 +73,15 @@ struct ticket* loadTicket(char* subjectLine){
 
 		if (strcmp(empStr, "NULL") == 0) {
 			ticket = createTicket(subjectLine, ticketDesc, priorityFromStr(priorStr), NULL, loadCustomer(custStr));
+			fclose(ticketFile);
 			return ticket;
 		} else {
 			ticket = createTicket(subjectLine, ticketDesc, priorityFromStr(priorStr), loadEmployee(empStr), loadCustomer(custStr));
+			fclose(ticketFile);
 			return ticket;
 		}
 	} else{
+		fclose(ticketFile);
 		return NULL;
 		}
 }
@@ -111,6 +114,49 @@ void writeTicket(struct ticket* ticket) {
 	fputc(',', ticketFile);
 	fputs(ticket->customer->name, ticketFile);
 	fputc('\n', ticketFile);
+	fclose(ticketFile);
+}
+
+void assignTicket(struct ticket* ticket, struct employee* newEmployee) {
+	ticket->employee = newEmployee;
+	deleteLine(ticket->subjectLine, "tickets");
+	writeTicket(ticket);
+
+}
+
+void printAllTickets(){
+	FILE* tickets = fopen("./data/tickets.csv", "r");
+	char currTicket[2048];
+
+	printf("\nTickets list:\n");
+
+	while (getline(currTicket, tickets) != 1) {
+		char* subLine;
+		subLine = strtok(currTicket,",");
+		
+		if (subLine == NULL){
+			break;
+		}
+
+		struct ticket* ticketToPrint = loadTicket(subLine);
+		char priorStr[16];
+		strFromPriority(priorStr, ticketToPrint->priority);
+		
+		char empName[128];
+
+		if (ticketToPrint->employee == NULL) {
+			strcpy(empName, "None");
+		}
+
+		else{
+			strcpy(empName, ticketToPrint->employee->name);
+		}
+		
+		
+		printf("Subject: %s - Priority: %s - Assigned to: %s\n", subLine, priorStr, empName);
+
+	}
+	fclose(tickets);
 }
 
 void freeTicket(struct ticket* ticket) {
